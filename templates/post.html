@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ post.title }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        article {
+            margin-bottom: 30px;
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .post-content {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+        .post-author {
+            font-style: italic;
+            color: #555;
+        }
+        .post-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 15px;
+            margin-top: 10px;
+            color: white;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        .delete-button {
+            background-color: #dc3545;
+        }
+        .delete-button:hover {
+            background-color: #c82333;
+        }
+        section {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+        h2 {
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+        .comment-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .comment-item {
+            background: #f1f1f1;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .comment-form {
+            display: flex;
+            flex-direction: column;
+            margin-top: 20px;
+        }
+        textarea {
+            resize: none;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            height: 80px;
+        }
+        .comment-form button {
+            align-self: flex-end;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <article>
+            <h1>{{ post.title }}</h1>
+            <p class="post-content">{{ post.content }}</p>
+            <p class="post-author">作者: {{ post.author.name }}</p>
+
+            {% if post.image_path %}
+                <p>目前圖片: <img src="{{ url_for('static', filename='uploads/' + post.image_path) }}" alt="文章圖片" class="post-image"></p>
+            {% else %}
+                <p>目前圖片: <img src="{{ url_for('static', filename='uploads/default.jpg') }}" alt="預設圖片" class="post-image"></p>
+            {% endif %}
+
+            <a href="{{ url_for('index') }}" class="button">回到文章列表</a>
+
+            {% if current_user.is_authenticated and current_user.id == post.author_id %}
+                <a href="{{ url_for('edit_post', post_id=post.id) }}" class="button">編輯文章</a>
+                <form method="POST" action="{{ url_for('delete_post', post_id=post.id) }}" class="delete-form" style="display:inline;">
+                    <button type="submit" class="button delete-button">刪除文章</button>
+                </form>
+            {% endif %}
+
+        </article>
+
+        <section>
+            <h2>留言區</h2>
+            <ul class="comment-list">
+                {% for comment in comments %}
+                    <li class="comment-item">
+                        <p><strong>{{ comment.author.name }}:</strong> {{ comment.content }}</p>
+                    </li>
+                {% endfor %}
+            </ul>
+
+            {% if current_user.is_authenticated %}
+                <form method="POST" class="comment-form">
+                    <textarea name="comment" placeholder="輸入留言" required></textarea>
+                    <button type="submit" class="button">發表留言</button>
+                </form>
+            {% else %}
+                <p>請 <a href="{{ url_for('login') }}">登入</a> 以發表留言。</p>
+            {% endif %}
+        </section>
+    </div>
+</body>
+</html>

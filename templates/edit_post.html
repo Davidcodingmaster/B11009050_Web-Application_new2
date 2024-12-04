@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>編輯文章</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        label {
+            margin-bottom: 10px;
+            font-weight: bold;
+            display: block;
+        }
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        input[type="file"] {
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 15px;
+            color: white;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .image-preview {
+            max-width: 200px;
+            margin: 10px 0;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 15px;
+            color: white;
+            background-color: #6c757d;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .back-link:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>編輯文章</h1>
+        <form action="{{ url_for('edit_post', post_id=post.id) }}" method="POST" enctype="multipart/form-data">
+            <label for="title">文章標題</label>
+            <input type="text" name="title" id="title" value="{{ post.title }}" required>
+            
+            <label for="content">文章內容</label>
+            <textarea name="content" id="content" required>{{ post.content }}</textarea>
+            
+            <label for="image">上傳圖片</label>
+            <input type="file" name="image" id="image" accept="image/*">  <!-- 圖片上傳 -->
+            
+            {% if post.image_path %}
+                <p>目前圖片:</p>
+                <img src="{{ url_for('static', filename='uploads/' + post.image_path) }}" alt="文章圖片" class="image-preview">
+            {% else %}
+                <p>目前圖片: 無</p>
+            {% endif %}
+    
+            <button type="submit">儲存變更</button>
+        </form>
+        <a href="{{ url_for('get_post', post_id=post.id) }}" class="back-link">回到文章</a>
+    </div>
+</body>
+</html>
